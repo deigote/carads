@@ -1,5 +1,7 @@
 package carads.controllers
 
+import carads.model.Advert
+import carads.services.{AdvertsFormatter, AdvertsJdbcRepository, AdvertsRepository}
 import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
@@ -15,6 +17,9 @@ import play.api.test._
  */
 @RunWith(classOf[JUnitRunner])
 class AdvertsRestSpec extends Specification {
+
+  private val repo: AdvertsRepository = new AdvertsJdbcRepository()
+  private implicit val formatter = new AdvertsFormatter()
 
   val invalidBodies = List(
     "{invalid: json}",
@@ -85,6 +90,19 @@ class AdvertsRestSpec extends Specification {
         val response: JsObject = Json.parse(contentAsString(resp)).as[JsObject]
         response - "id" must beEqualTo(validBody)
       }
+    }
+
+    "send not found without body when getting a non existent advert" in new WithApplication {
+      private val resp = route(FakeRequest(GET, "/advert/" + 30403)).get
+      status(resp) must equalTo(NOT_FOUND)
+      contentAsString(resp).length must beEqualTo(0)
+    }
+
+    "send OK along with a body when getting a existent advert" in new WithApplication {
+      private val advert: Advert = repo.list().head
+      private val resp = route(FakeRequest(GET, "/advert/" + advert.getId().get)).get
+      status(resp) must equalTo(OK)
+      contentAsJson(resp).validate[Advert].get must beEqualTo(advert)
     }
   }
 }
