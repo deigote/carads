@@ -108,10 +108,10 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   }
 
   override def list(sortBy: String): List[Advert] = {
+    assert(sortBy.matches("^[a-zA-Z0-9]*$"), "Invalid sort pattern")
     DB.withConnection() { conn =>
       val list: PreparedStatement =
-        conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert order by ?")
-      list.setString(1, sortBy)
+        conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert order by " + sortBy)
       consumeResultSet(list.executeQuery())
     }
   }
