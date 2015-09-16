@@ -27,4 +27,6 @@ trait AdvertsRepository {
     case None => None
   }
   def get(id: Int): Option[Advert]
+
+  def delete(id: Int)
 }

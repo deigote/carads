@@ -86,6 +86,19 @@ class AdvertsRepositorySpec extends Specification {
       }
     }
 
+    "allow to delete retrieved adverts by id" in new WithApplication {
+      def deleteEachByCheckingIsDeleted(adverts: List[Advert]): Unit = {
+        if (!adverts.isEmpty) {
+          val idToDelete: Int = repo.list().head.getId().get
+          repo.delete(idToDelete)
+          val advertsAfterDeletion: List[Advert] = repo.list()
+          advertsAfterDeletion.find { _.getId().get == idToDelete }.isDefined must beFalse
+          deleteEachByCheckingIsDeleted(advertsAfterDeletion)
+        }
+      }
+      deleteEachByCheckingIsDeleted(repo.list())
+    }
+
   }
 }
 

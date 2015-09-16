@@ -99,6 +99,14 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     }
   }
 
+  override def delete(id: Int): Unit = {
+    DB.withConnection() { conn =>
+      val delete: PreparedStatement = conn.prepareStatement("delete from advert where id = ?")
+      delete.setInt(1, id)
+      if (delete.executeUpdate() == 0) throw new SQLException("Advert deletion failed: no rows affected")
+    }
+  }
+
   override def list(sortBy: String): List[Advert] = {
     DB.withConnection() { conn =>
       val list: PreparedStatement =
