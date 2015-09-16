@@ -7,6 +7,7 @@ import org.specs2.mutable._
 import org.specs2.runner._
 import play.api.Logger
 import play.api.libs.json._
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 import play.api.test._
 
@@ -136,6 +137,19 @@ class AdvertsRestSpec extends Specification {
       ).get
       status(resp) must equalTo(OK)
       contentAsJson(resp).validate[Advert].get must beEqualTo(updatedAdvertForNew)
+    }
+
+    "send no content after deleting an existent advert, and not found afterwards for the same" in new WithApplication {
+      private val advert: Advert = repo.list().head
+      private val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(DELETE, "/advert/" + advert.getId().get)
+      private val firstResp = route(request).get
+      private val secondResp = route(request).get
+
+      status(firstResp) must equalTo(NO_CONTENT)
+      contentAsString(firstResp).length must beEqualTo(0)
+
+      status(secondResp) must equalTo(NOT_FOUND)
+      contentAsString(firstResp).length must beEqualTo(0)
     }
 
   }

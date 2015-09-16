@@ -1,15 +1,15 @@
 package carads.controllers
 
-import java.util.NoSuchElementException
 import javax.inject.Inject
 
 import carads.model.Advert
 import carads.services.{AdvertsFormatter, AdvertsRepository}
 import play.api.Logger
-import play.api.mvc.{Controller, Action}
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.mvc.{Action, Controller, Result}
 
 // TODO: check if when using the repo (which is most likely a blocking operation - JDBC) actions must be async
+// TODO: investigate a better way of dealing with common exceptions
 class AdvertsRest @Inject()(advertsRepo: AdvertsRepository) (implicit advertsFormatter: AdvertsFormatter) extends Controller {
 
   def create = Action(parse.json) { request =>
@@ -32,15 +32,29 @@ class AdvertsRest @Inject()(advertsRepo: AdvertsRepository) (implicit advertsFor
   def update(id: Int) = Action(parse.json) { request =>
     request.body.validate[Advert] match {
       case (success: JsSuccess[Advert]) =>
-        try {
+        withCommonExceptionsMapping {
           Logger.info("Updating " + success.get)
           Ok(Json.toJson(advertsRepo.update(success.get.withId(id))))
-        } catch {
-          case noElement: NoSuchElementException => NotFound("")
-          case other: Throwable => throw other
         }
       case (error: JsError) =>
         BadRequest(JsError.toJson(error))
+    }
+  }
+
+  def delete(id: Int) = Action {
+    withCommonExceptionsMapping {
+      Logger.info("Deleting " + id)
+      advertsRepo.delete(id)
+      NoContent
+    }
+  }
+
+  private def withCommonExceptionsMapping(block: => Result): Result = {
+    try {
+      block
+    } catch {
+      case noElement: scala.NoSuchElementException => NotFound("")
+      case other: Throwable => throw other
     }
   }
 
