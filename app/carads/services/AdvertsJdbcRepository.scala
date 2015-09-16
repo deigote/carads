@@ -15,7 +15,7 @@ import play.api.db._
 class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 
   override def clear(): Unit = {
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       conn.prepareStatement("delete from advert").execute()
     }
   }
@@ -24,12 +24,12 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     withAdvertCreation(
       advert,
       "insert into advert (type, title, fuel, price) values (?, ?, ?, ?)",
-      { insertStatement: PreparedStatement =>
-        insertStatement.setString(1, "New")
-        insertStatement.setString(2, advert.title)
-        insertStatement.setString(3, advert.fuel.toString())
-        insertStatement.setInt(4, advert.price)
-        insertStatement
+      { insert: PreparedStatement =>
+        insert.setString(1, "New")
+        insert.setString(2, advert.title)
+        insert.setString(3, advert.fuel.toString())
+        insert.setInt(4, advert.price)
+        insert
       }
     )
   }
@@ -38,14 +38,14 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     withAdvertCreation(
     advert,
     "insert into advert (type, title, fuel, price, mileage, firstRegistration) values (?, ?, ?, ?, ?, ?)",
-    { insertStatement: PreparedStatement =>
-      insertStatement.setString(1, "Used")
-      insertStatement.setString(2, advert.title)
-      insertStatement.setString(3, advert.fuel.toString())
-      insertStatement.setInt(4, advert.price)
-      insertStatement.setInt(5, advert.mileage)
-      insertStatement.setDate(6, new Date(toMillis(advert.firstRegistration)))
-      insertStatement
+    { insert: PreparedStatement =>
+      insert.setString(1, "Used")
+      insert.setString(2, advert.title)
+      insert.setString(3, advert.fuel.toString())
+      insert.setInt(4, advert.price)
+      insert.setInt(5, advert.mileage)
+      insert.setDate(6, new Date(toMillis(advert.firstRegistration)))
+      insert
     }
     )
   }
@@ -54,10 +54,10 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
                                  insertSql: String,
                                  paramsSetter: PreparedStatement => PreparedStatement): Advert = {
     DB.withConnection() { conn =>
-      val prepareStatement: PreparedStatement =
+      val insert: PreparedStatement =
         paramsSetter(conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS))
-      val affectedRows: Int = prepareStatement.executeUpdate()
-      val generatedKeys: ResultSet = prepareStatement.getGeneratedKeys()
+      val affectedRows: Int = insert.executeUpdate()
+      val generatedKeys: ResultSet = insert.getGeneratedKeys()
       if (affectedRows == 0) throw new SQLException("Advert creation failed: no rows affected")
       else if (!generatedKeys.next()) throw new SQLException("Advert creation failed: no ID returned")
       else return advertToCreate.withId(generatedKeys.getInt(1))
