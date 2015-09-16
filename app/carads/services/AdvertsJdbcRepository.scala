@@ -68,7 +68,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
         case None => update.setNull(5, Types.DATE)
       }
       update.setInt(6, advert.getId().get)
-      if (update.executeUpdate() == 0) throw new SQLException("Advert update failed: no rows affected")
+      if (update.executeUpdate() == 0) throw new NoSuchElementException("Advert update failed: no rows affected")
       else return advert
     }
   }
@@ -103,7 +103,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     DB.withConnection() { conn =>
       val delete: PreparedStatement = conn.prepareStatement("delete from advert where id = ?")
       delete.setInt(1, id)
-      if (delete.executeUpdate() == 0) throw new SQLException("Advert deletion failed: no rows affected")
+      if (delete.executeUpdate() == 0) throw new NoSuchElementException("Advert deletion failed: no rows affected")
     }
   }
 
