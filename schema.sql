@@ -3,7 +3,7 @@ CREATE TABLE advert(
   type VARCHAR(16) NOT NULL,
   title VARCHAR(1024) NOT NULL,
   fuel VARCHAR(16) NOT NULL,
-  price SMALLINT NOT NULL,
-  mileage SMALLINT,
+  price INTEGER NOT NULL,
+  mileage INTEGER,
   firstRegistration DATE
 );
