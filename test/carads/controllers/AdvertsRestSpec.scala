@@ -1,6 +1,6 @@
 package carads.controllers
 
-import carads.model.Advert
+import carads.model.{AdvertForNew, Advert}
 import carads.services.{AdvertsFormatter, AdvertsJdbcRepository, AdvertsRepository}
 import org.junit.runner._
 import org.specs2.mutable._
@@ -98,11 +98,45 @@ class AdvertsRestSpec extends Specification {
       contentAsString(resp).length must beEqualTo(0)
     }
 
-    "send OK along with a body when getting a existent advert" in new WithApplication {
+    "send OK along with a valid body when getting a existent advert" in new WithApplication {
       private val advert: Advert = repo.list().head
       private val resp = route(FakeRequest(GET, "/advert/" + advert.getId().get)).get
       status(resp) must equalTo(OK)
       contentAsJson(resp).validate[Advert].get must beEqualTo(advert)
     }
+
+    "send unsupported media type when updating with wrong media type" in new WithApplication {
+      private val resp = route(FakeRequest(PUT, "/advert/" + 30403)).get
+      status(resp) must equalTo(UNSUPPORTED_MEDIA_TYPE)
+    }
+
+    "send not found without body when updating a non existent advert" in new WithApplication {
+      private val advertForNew: Advert = repo.list().find { _.isInstanceOf[AdvertForNew] }.get
+      private val updatedAdvertForNew: Advert = AdvertForNew(
+        None, "Updated title", advertForNew.getFuel(), advertForNew.getPrice() * 2
+      )
+      private val resp = route(
+        FakeRequest(PUT, "/advert/" + 30403)
+          .withHeaders(("Content-Type", "application/json"))
+          .withJsonBody(Json.toJson(updatedAdvertForNew))
+      ).get
+      status(resp) must equalTo(NOT_FOUND)
+      contentAsString(resp).length must beEqualTo(0)
+    }
+
+    "send OK along with a valid body when updating a existent advert" in new WithApplication {
+      private val advertForNew: Advert = repo.list().find { _.isInstanceOf[AdvertForNew] }.get
+      private val updatedAdvertForNew: Advert = AdvertForNew(
+        advertForNew.getId(), "Updated title", advertForNew.getFuel(), advertForNew.getPrice() * 2
+      )
+      private val resp = route(
+        FakeRequest(PUT, "/advert/" + advertForNew.getId().get)
+          .withHeaders(("Content-Type", "application/json"))
+          .withJsonBody(Json.toJson(updatedAdvertForNew))
+      ).get
+      status(resp) must equalTo(OK)
+      contentAsJson(resp).validate[Advert].get must beEqualTo(updatedAdvertForNew)
+    }
+
   }
 }

@@ -11,7 +11,6 @@ import com.google.inject.ImplementedBy
 @ImplementedBy(classOf[AdvertsJdbcRepository])
 trait AdvertsRepository {
 
-
   def list(): List[Advert] = list(None)
   def list(sortBy: Option[String]): List[Advert] = list(sortBy.getOrElse("id"))
   def list(sortBy: String): List[Advert]

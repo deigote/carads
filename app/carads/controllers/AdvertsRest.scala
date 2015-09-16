@@ -1,5 +1,6 @@
 package carads.controllers
 
+import java.util.NoSuchElementException
 import javax.inject.Inject
 
 import carads.model.Advert
@@ -25,6 +26,21 @@ class AdvertsRest @Inject()(advertsRepo: AdvertsRepository) (implicit advertsFor
     advertsRepo.get(id) match {
       case Some(advert) => Ok(Json.toJson(advert))
       case None => NotFound("")
+    }
+  }
+
+  def update(id: Int) = Action(parse.json) { request =>
+    request.body.validate[Advert] match {
+      case (success: JsSuccess[Advert]) =>
+        try {
+          Logger.info("Updating " + success.get)
+          Ok(Json.toJson(advertsRepo.update(success.get.withId(id))))
+        } catch {
+          case noElement: NoSuchElementException => NotFound("")
+          case other: Throwable => throw other
+        }
+      case (error: JsError) =>
+        BadRequest(JsError.toJson(error))
     }
   }
 
