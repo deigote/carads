@@ -78,6 +78,14 @@ class AdvertsRepositorySpec extends Specification {
       adverts(3) must beEqualTo(nonPersistedUpdateForUsed)
     }
 
+    "allow to get adverts by id" in new WithApplication {
+      repo.list().map(_.getId()).foreach { id =>
+        val advert: Option[Advert] = repo.get(id)
+        advert.isDefined must beTrue
+        advert.get.getId() must beEqualTo(id)
+      }
+    }
+
   }
 }
 
