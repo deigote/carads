@@ -7,7 +7,6 @@ import org.specs2.mutable._
 import org.specs2.runner._
 import play.api.Logger
 import play.api.libs.json._
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 import play.api.test._
 
@@ -52,6 +51,7 @@ class AdvertsRestSpec extends Specification {
     .build
   */
 
+
   "Application" should {
 
     "send unsupported media type when creating an advert with no JSON content type" in new WithApplication() {
@@ -80,6 +80,8 @@ class AdvertsRestSpec extends Specification {
     }
 
     "send created along with the created advert when creating an advert with valid JSON body" in new WithApplication {
+      // TODO: test phase should automatically clear the database before starting
+      repo.clear()
       validBodies.foreach { validBody =>
         val resp = route(
           FakeRequest(POST, "/advert")
@@ -91,6 +93,26 @@ class AdvertsRestSpec extends Specification {
         val response: JsObject = Json.parse(contentAsString(resp)).as[JsObject]
         response - "id" must beEqualTo(validBody)
       }
+    }
+
+    "send all adverts sorted by id if none when listing adverts without specified order" in new WithApplication {
+      val resp = route(FakeRequest(GET, "/advert")).get
+      status(resp) must equalTo(OK)
+      val response: JsArray = Json.parse(contentAsString(resp)).as[JsArray]
+
+      // id ordered
+      response(0).validate[Advert].get.getTitle() must beEqualTo("a title")
+      response(1).validate[Advert].get.getTitle() must beEqualTo("a different title")
+    }
+
+    "send all adverts sorted by the specified criteria if none when listing adverts with specific order" in new WithApplication {
+      val resp = route(FakeRequest(GET, "/advert?sortBy=title")).get
+      status(resp) must equalTo(OK)
+      val response: JsArray = Json.parse(contentAsString(resp)).as[JsArray]
+
+      // title ordered
+      response(1).validate[Advert].get.getTitle() must beEqualTo("a title")
+      response(0).validate[Advert].get.getTitle() must beEqualTo("a different title")
     }
 
     "send not found without body when getting a non existent advert" in new WithApplication {
@@ -141,7 +163,7 @@ class AdvertsRestSpec extends Specification {
 
     "send no content after deleting an existent advert, and not found afterwards for the same" in new WithApplication {
       private val advert: Advert = repo.list().head
-      private val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(DELETE, "/advert/" + advert.getId().get)
+      private val request = FakeRequest(DELETE, "/advert/" + advert.getId().get)
       private val firstResp = route(request).get
       private val secondResp = route(request).get
 

@@ -49,6 +49,10 @@ class AdvertsRest @Inject()(advertsRepo: AdvertsRepository) (implicit advertsFor
     }
   }
 
+  def list() = Action { request =>
+    Ok(Json.toJson(advertsRepo.list(request.getQueryString("sortBy"))))
+  }
+
   private def withCommonExceptionsMapping(block: => Result): Result = {
     try {
       block

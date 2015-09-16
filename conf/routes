@@ -8,6 +8,7 @@ GET           /                    controllers.Application.index
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
 
+GET           /advert              carads.controllers.AdvertsRest.list
 POST          /advert              carads.controllers.AdvertsRest.create
 GET           /advert/:id          carads.controllers.AdvertsRest.show(id: Int)
 PUT           /advert/:id          carads.controllers.AdvertsRest.update(id: Int)
