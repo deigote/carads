@@ -51,6 +51,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   }
 
   override def update(advert: Advert): Advert = {
+    assert(advert.getId().isDefined)
     DB.withConnection() { conn =>
       val update: PreparedStatement = conn.prepareStatement(
         "update advert set title = ?, fuel = ?, price = ?, mileage = ?, firstRegistration = ? where id = ?"
