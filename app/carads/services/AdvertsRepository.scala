@@ -1,6 +1,6 @@
 package carads.services
 
-import carads.model.Advert
+import carads.model.{AdvertForUsed, AdvertForNew, Advert}
 import com.google.inject.ImplementedBy
 
 /**
@@ -15,4 +15,6 @@ trait AdvertsRepository {
   def list(sortBy: Option[String]): List[Advert] = list(sortBy.getOrElse("id"))
   def list(sortBy: String): List[Advert]
   def clear(): Unit
+  def create(advert: AdvertForNew): Advert
+  def create(advert: AdvertForUsed): Advert
 }
