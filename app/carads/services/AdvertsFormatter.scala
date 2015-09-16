@@ -45,9 +45,9 @@ class AdvertsFormatter extends Format[Advert] {
   override def writes(ad: Advert): JsValue = {
     ad match {
       case AdvertForNew(_,_,_,_) =>
-        adForNewFormat.writes(ad.asInstanceOf[AdvertForNew]).as[JsObject] + ("type" -> Json.toJson("Used"))
+        adForNewFormat.writes(ad.asInstanceOf[AdvertForNew]).as[JsObject] + ("type" -> Json.toJson("New"))
       case AdvertForUsed(_,_,_,_,_,_) =>
-        adForUsedFormat.writes(ad.asInstanceOf[AdvertForUsed]).as[JsObject] + ("type" -> Json.toJson("New"))
+        adForUsedFormat.writes(ad.asInstanceOf[AdvertForUsed]).as[JsObject] + ("type" -> Json.toJson("Used"))
     }
   }
 
