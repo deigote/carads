@@ -1,0 +1,196 @@
+swagger: '2.0'
+
+info:
+  version: v1
+  title: Adverts REST API
+  description: |
+    A REST repository to manage car adverts
+
+host: localhost:9000
+basePath: /
+schemes:
+  - http
+produces:
+  - application/json
+consumes:
+  - application/json
+
+paths:
+  /advert:
+    post:
+      operationId: createAdvert
+      summary: Create a new advert
+      parameters:
+      - name: advertJsonInput
+        in: body
+        schema:
+          $ref: "#/definitions/AdvertInput"
+      responses:
+        201:
+          description: Created advert
+          schema:
+            $ref: "#/definitions/Advert"
+        400:
+          description: Invalid JSON body
+        415:
+          description: Content type is not JSON
+          
+    get:
+      operationId: listAdverts
+      summary: list all the adverts
+      parameters:
+      - name: sortBy
+        in: query
+        type: string
+        enum:
+        - id
+        - title
+        - fuel
+        - price
+        - mileage
+        - firstRegistration
+      responses:
+        200:
+          description: List of the adverts
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Advert"
+              
+  /advert/{id}:
+    get:
+      operationId: getAdvert
+      summary: Get an advert by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: The advert for the specified id
+          schema:
+            $ref: "#/definitions/Advert"
+        404:
+          description: Advert with the supplied id not found
+
+    put:
+      operationId: updateAdvert
+      summary: Update an advert by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        format: int32
+      - name: advertJsonInput
+        in: body
+        schema:
+          $ref: "#/definitions/AdvertInput"
+      responses:
+        200:
+          description: The advert for the specified id
+          schema:
+            $ref: "#/definitions/Advert"
+        404:
+          description: Advert with the supplied id not found
+
+    delete:
+      operationId: deleteAdvert
+      summary: Delete the advert corresponding to the specified id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: The updated advert
+        400:
+          description: Invalid JSON body
+        404:
+          description: Advert with the supplied id not found
+        415:
+          description: Content type is not JSON
+
+
+definitions:
+  AdvertInput:
+    type: object
+    properties:
+      type: 
+        description: Type of the car (Used or New)
+        type: string
+        enum:
+        - Used
+        - New
+      title:
+        description: Description of the car
+        type: string
+      price:
+        description: Price in euros
+        type: integer
+        format: int32
+      fuel:
+        description: Fuel type that the car consumes
+        type: string
+        enum:
+        - Diesel
+        - Gasoline
+      mileage:
+        description: Mileage of the car in kilometers (only for type Used)
+        type: integer
+        format: int32
+      firstRegistration: 
+        description: The date when the car was first registered (only for type Used)
+        type: string
+        format: date
+    required:
+    - type
+    - title
+    - price
+    - fuel
+  
+  Advert:
+    type: object
+    properties:
+      id: 
+        description: the identifier of the ad (unique across the whole system)
+        type: integer
+        format: int32
+      type: 
+        description: Type of the car (Used or New)
+        type: string
+        enum:
+        - Used
+        - New
+      title:
+        description: Description of the car
+        type: string
+      price:
+        description: Price in euros
+        type: integer
+        format: int32
+      fuel:
+        description: Fuel type that the car consumes
+        type: string
+        enum:
+        - Diesel
+        - Gasoline
+      mileage:
+        description: Mileage of the car in kilometers (only for type Used)
+        type: integer
+        format: int32
+      firstRegistration: 
+        description: The date when the car was first registered (only for type Used)
+        type: string
+        format: date
+    required:
+    - type
+    - title
+    - price
+    - fuel
+
+    
