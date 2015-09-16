@@ -88,10 +88,10 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 
   override def get(id: Int): Option[Advert] = {
     DB.withConnection() { conn =>
-      val prepareStatement: PreparedStatement =
+      val get: PreparedStatement =
         conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert where id = ?")
-      prepareStatement.setInt(1, id)
-      val adverts = consumeResultSet(prepareStatement.executeQuery())
+      get.setInt(1, id)
+      val adverts = consumeResultSet(get.executeQuery())
       if (adverts.size > 1) throw new IllegalStateException("Database does not correspond to current app: found more than one advert with id " + id)
       else if (adverts.size == 1) Some(adverts.head)
       else None
@@ -100,10 +100,10 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 
   override def list(sortBy: String): List[Advert] = {
     DB.withConnection() { conn =>
-      val prepareStatement: PreparedStatement =
+      val list: PreparedStatement =
         conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert order by ?")
-      prepareStatement.setString(1, sortBy)
-      consumeResultSet(prepareStatement.executeQuery())
+      list.setString(1, sortBy)
+      consumeResultSet(list.executeQuery())
     }
   }
 
