@@ -67,13 +67,13 @@ class AdvertsFormatterSpec extends Specification {
       parseResultFails(JsString("ad")) must beTrue
     }
 
-    newAdFields.foreach { prop =>
+    (newAdFields - "id").foreach { prop =>
       "fail when reading a new advert that misses the mandatory field " + prop in new WithApplication {
         parseResultFails(validJsonForAdForNew - prop) must beTrue
       }
     }
 
-    usedAdFields.foreach { prop =>
+    (usedAdFields - "id").foreach { prop =>
       "fail when reading a used advert that misses the mandatory field " + prop in new WithApplication {
         parseResultFails(validJsonForAdForUsed - prop) must beTrue
       }
@@ -100,7 +100,7 @@ class AdvertsFormatterSpec extends Specification {
       maybeAdvert.isDefined must beTrue
       maybeAdvert.getOrElse(null).isInstanceOf[AdvertForNew] must beTrue
       private val advert: AdvertForNew = maybeAdvert.getOrElse(null).asInstanceOf[AdvertForNew]
-      advert.id must equalTo(1)
+      advert.id.get must equalTo(1)
       advert.title must equalTo("a title")
       advert.fuel must equalTo(Gasoline)
       advert.price must equalTo(14000)
@@ -111,7 +111,7 @@ class AdvertsFormatterSpec extends Specification {
       maybeAdvert.isDefined must beTrue
       maybeAdvert.getOrElse(null).isInstanceOf[AdvertForUsed] must beTrue
       private val advert: AdvertForUsed = maybeAdvert.getOrElse(null).asInstanceOf[AdvertForUsed]
-      advert.id must equalTo(1)
+      advert.id.get must equalTo(1)
       advert.title must equalTo("a title")
       advert.fuel must equalTo(Diesel)
       advert.price must equalTo(14000)

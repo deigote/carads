@@ -28,7 +28,7 @@ class AdvertsFormatter extends Format[Advert] {
   }
 
   private val commonFormatBuilder =
-  (JsPath \ "id").format[Int] and
+  (JsPath \ "id").formatNullable[Int] and
     (JsPath \ "title").format[String] and
     (JsPath \ "fuel").format[Fuel] and
     (JsPath \ "price").format[Int]

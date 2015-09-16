@@ -36,7 +36,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     val advertType: String = resultSet.getString("type")
     if (advertType == "Used")
       AdvertForUsed(
-        resultSet.getInt("id"),
+        Some(resultSet.getInt("id")),
         resultSet.getString("title"),
         fuelFrom(resultSet.getString("fuel")),
         resultSet.getInt("price"),
@@ -45,7 +45,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
       )
     else if (advertType == "New")
       AdvertForNew(
-        resultSet.getInt("id"),
+        Some(resultSet.getInt("id")),
         resultSet.getString("title"),
         fuelFrom(resultSet.getString("fuel")),
         resultSet.getInt("price")
