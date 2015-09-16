@@ -1,0 +1,9 @@
+CREATE TABLE advert(
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  type VARCHAR(16) NOT NULL,
+  title VARCHAR(1024) NOT NULL,
+  fuel VARCHAR(16) NOT NULL,
+  price SMALLINT NOT NULL,
+  mileage SMALLINT,
+  firstRegistration DATE
+);

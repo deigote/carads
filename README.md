@@ -6,9 +6,26 @@ To make writing commit messages easier, please read the first line prepended wit
 
 Naturally this only applies to the title, not the extended description, if any.
 
+### Configuring the project
+
+##### Scala, SBT, Activator
+
+The project has been created using TypeSafe Activator with version _sbt launcher version 0.13.8_. It uses Play 2.4 and Scala 2.11.
+
+##### MySQL
+
+For the first version of the project, a JDBC-based storage has been chosen. MySQL seems to have good support (attempts to use SQLite were not very promising). Configuring it involves:
+
+ 1. Install MySQL 5.6
+ 2. Run the script `setup.sql` with the MySQL root user: `mysql -u root -p$MYSQL_ROOT_PWD < setup.sql`
+
+It will create a user `carads` with access to the database `carads`, and then source the script `schema.sql`, which creates the required tables.
+
+Note: Being completely new to Scala and Play, choosing something I knew for the storage seemed like the best choice. Nevertheless, the application design allows to easily switch the persistent repository implementation.
+
 ### Model
 
-#### Advert
+##### Advert
 
 Abstract class with the following parameters:
 
@@ -31,9 +48,7 @@ Without having further experience with the language, seems to me that the chosen
 
 This way, most of the code can deal with the top level class without worrying about its implementation details. 
 
-
-
-#### Fuel
+##### Fuel
 
 Abstract class with no parameters and the following case objects extending it:
 
