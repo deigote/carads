@@ -3,6 +3,7 @@ package carads.services
 import java.sql._
 import java.time.{Instant, LocalDate, ZoneId}
 import javax.inject.{Inject, Singleton}
+
 import carads.model._
 import play.api.Play.current
 import play.api.db._
@@ -52,7 +53,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 
   override def update(advert: Advert): Advert = {
     assert(advert.getId().isDefined)
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       val update: PreparedStatement = conn.prepareStatement(
         "update advert set title = ?, fuel = ?, price = ?, mileage = ?, firstRegistration = ? where id = ?"
       )
@@ -76,7 +77,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   private def withAdvertCreation(advertToCreate: Advert,
                                  insertSql: String,
                                  paramsSetter: PreparedStatement => PreparedStatement): Advert = {
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       val insert: PreparedStatement =
         paramsSetter(conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS))
       val affectedRows: Int = insert.executeUpdate()
@@ -88,7 +89,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   }
 
   override def get(id: Int): Option[Advert] = {
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       val get: PreparedStatement =
         conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert where id = ?")
       get.setInt(1, id)
@@ -100,7 +101,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   }
 
   override def delete(id: Int): Unit = {
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       val delete: PreparedStatement = conn.prepareStatement("delete from advert where id = ?")
       delete.setInt(1, id)
       if (delete.executeUpdate() == 0) throw new NoSuchElementException("Advert deletion failed: no rows affected")
@@ -109,7 +110,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 
   override def list(sortBy: String): List[Advert] = {
     assert(sortBy.matches("^[a-zA-Z0-9]*$"), "Invalid sort pattern")
-    DB.withConnection() { conn =>
+    DB.withConnection { conn =>
       val list: PreparedStatement =
         conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert order by " + sortBy)
       consumeResultSet(list.executeQuery())
