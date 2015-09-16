@@ -50,6 +50,28 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
     )
   }
 
+  override def update(advert: Advert): Advert = {
+    DB.withConnection() { conn =>
+      val update: PreparedStatement = conn.prepareStatement(
+        "update advert set title = ?, fuel = ?, price = ?, mileage = ?, firstRegistration = ? where id = ?"
+      )
+      update.setString(1, advert.getTitle())
+      update.setString(2, advert.getFuel().toString())
+      update.setInt(3, advert.getPrice())
+      advert.getMileage() match {
+        case Some(mileage) => update.setInt(4, mileage)
+        case None => update.setNull(4, Types.INTEGER)
+      }
+      advert.getFirstRegistration() match {
+        case Some(date) => update.setDate(5, new Date(toMillis(date)))
+        case None => update.setNull(5, Types.DATE)
+      }
+      update.setInt(6, advert.getId().get)
+      if (update.executeUpdate() == 0) throw new SQLException("Advert update failed: no rows affected")
+      else return advert
+    }
+  }
+
   private def withAdvertCreation(advertToCreate: Advert,
                                  insertSql: String,
                                  paramsSetter: PreparedStatement => PreparedStatement): Advert = {

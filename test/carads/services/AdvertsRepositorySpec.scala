@@ -4,9 +4,10 @@ import java.time.LocalDate
 
 import carads.model._
 import org.specs2.mutable._
+import play.api.Logger
 import play.api.test._
 
-// TODO: use Guide to obtain the configured repository instead of a fixed one
+// TODO: use Guice to obtain the configured repository instead of a fixed one
 class AdvertsRepositorySpec extends Specification {
 
   private val repo: AdvertsRepository = new AdvertsJdbcRepository()
@@ -49,10 +50,32 @@ class AdvertsRepositorySpec extends Specification {
 
     "retrieved adverts must be equal to the ones passed to creation with id" in new WithApplication {
       private val adverts: List[Advert] = repo.list()
+      Logger.info("Retrieved adverts after creation " + adverts.toString)
+
       private val persistedForNew: Advert = adverts(0)
       private val persistedForUsed: Advert = adverts(1)
       nonPersistedForNew.withId(persistedForNew.getId().get) must beEqualTo(persistedForNew)
       nonPersistedForUsed.withId(persistedForUsed.getId().get) must beEqualTo(persistedForUsed)
+    }
+
+    "allow to update adverts" in new WithApplication {
+      private val nonUpdatedForNew: Advert = repo.create(nonPersistedForNew)
+      private val nonUpdatedForUsed: Advert = repo.create(nonPersistedForUsed)
+
+      private val nonPersistedUpdateForNew: AdvertForNew =
+        AdvertForNew(None, "Newest car", Gasoline, 16000)
+          .withId(nonUpdatedForNew.getId().get)
+      private val nonPersistedUpdateForUsed: AdvertForUsed =
+        AdvertForUsed(None, "Really used car", Diesel, 10000, 150000, LocalDate.of(2010, 5, 20))
+          .withId(nonUpdatedForUsed.getId().get)
+
+      repo.update(nonPersistedUpdateForNew) must beEqualTo(nonPersistedUpdateForNew)
+      repo.update(nonPersistedUpdateForUsed) must beEqualTo(nonPersistedUpdateForUsed)
+
+      private val adverts: List[Advert] = repo.list()
+      Logger.info("Retrieved adverts after update " + adverts.toString)
+      adverts(2) must beEqualTo(nonPersistedUpdateForNew)
+      adverts(3) must beEqualTo(nonPersistedUpdateForUsed)
     }
 
   }

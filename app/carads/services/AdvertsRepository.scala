@@ -17,4 +17,5 @@ trait AdvertsRepository {
   def clear(): Unit
   def create(advert: AdvertForNew): Advert
   def create(advert: AdvertForUsed): Advert
+  def update(advert: Advert): Advert
 }
