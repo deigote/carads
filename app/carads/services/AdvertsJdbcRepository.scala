@@ -22,7 +22,7 @@ class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
   override def list(sortBy: String): List[Advert] = {
     DB.withConnection() { conn =>
       val prepareStatement: PreparedStatement =
-        conn.prepareStatement("select id, title, fuel, price, mileage, firstRegistration from advert order by ?")
+        conn.prepareStatement("select id, type, title, fuel, price, mileage, firstRegistration from advert order by ?")
       prepareStatement.setString(1, sortBy)
       consumeResultSet(prepareStatement.executeQuery())
     }
