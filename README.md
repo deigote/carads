@@ -67,7 +67,7 @@ When an `id` needs to be specified, it must be appended to the resource URL. Adv
 
 ##### Swagger spec
 
-The REST API is described in detail using  [Swagger](http://swagger.io). The source in YAML format is part of the project with the name `swagger.yaml`. It can be examined in a developer's friendly GUI using the [Swagger UI](http://petstore.swagger.io/?url=https://carads-repo.herokuapp.com/assets/swagger.yaml), or copy-pasted to the [Swagger editor](http://editor.swagger.io/) for assisted edition.
+The REST API is described in detail using  [Swagger](http://swagger.io). The source in YAML format is part of the project with the name `swagger.yaml`. It can be examined in a developer's friendly GUI using the [Swagger UI](http://petstore.swagger.io/?url=https://carads-repo.herokuapp.com/assets/swagger.yaml#!/default), or copy-pasted to the [Swagger editor](http://editor.swagger.io/) for assisted edition.
 
 ### Tests
 
