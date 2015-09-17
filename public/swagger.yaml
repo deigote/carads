@@ -6,10 +6,10 @@ info:
   description: |
     A REST repository to manage car adverts
 
-host: localhost:9000
+host: carads-repo.herokuapp.com
 basePath: /
 schemes:
-  - http
+  - https
 produces:
   - application/json
 consumes:

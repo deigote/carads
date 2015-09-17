@@ -67,7 +67,7 @@ When an `id` needs to be specified, it must be appended to the resource URL. Adv
 
 ##### Swagger spec
 
-The REST API is described in detail using  [Swagger](http://swagger.io). The source in YAML format is part of the project with the name `swagger.yaml`. It can be examined in a developer's friendly GUI using the [Swagger UI](http://petstore.swagger.io/?url=https://carads-repo.herokuapp.com/assets/swagger.yaml#!/default), or copy-pasted to the [Swagger editor](http://editor.swagger.io/) for assisted edition.
+The REST API is described in detail using  [Swagger](http://swagger.io). The source in YAML format is part of the project with the name `swagger.yaml`. It can be examined in a developer's friendly GUI using the [Swagger UI](http://petstore.swagger.io/?url=https://carads-repo.herokuapp.com/assets/swagger.yaml), or copy-pasted to the [Swagger editor](http://editor.swagger.io/) for assisted edition.
 
 ### Tests
 
@@ -98,3 +98,9 @@ Another benefit would be that the client could be distributed to API consumers w
 A [Postman](https://www.getpostman.com/) collection (with the corresponding environment) is available in the `postman` directory. Is not really a test, but more a utility for the developer to quickly test the existing APIs. 
 
 Still, if the whole collection is ran in the defined order ([newman](https://github.com/postmanlabs/newman) is ideal for that) against a clean database it tests some aspects of the API, and invokes all existing operations
+
+### Deployment
+
+##### Preproduction
+
+A deployed version is available in [Car Ads on Heroku](https://carads-repo.herokuapp.com), using the free tier (only suitable for pet projects). Only Git is needed for the deployment, and of course, the appropriate Heroku permissions, MySQL ad-on and config variables.
