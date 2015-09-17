@@ -2,7 +2,6 @@ package carads.model
 
 import java.time.LocalDate
 
-// TODO: investigate Scala more and rethink model - no auto-getters for constructor params in abstract classes!
 abstract class Advert(id: Option[Int],
                       title: String,
                       fuel: Fuel,

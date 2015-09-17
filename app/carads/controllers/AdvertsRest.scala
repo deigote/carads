@@ -8,8 +8,6 @@ import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, Controller, Result}
 
-// TODO: check if when using the repo (which is most likely a blocking operation - JDBC) actions must be async
-// TODO: investigate a better way of dealing with common exceptions
 class AdvertsRest @Inject()(advertsRepo: AdvertsRepository) (implicit advertsFormatter: AdvertsFormatter) extends Controller {
 
   def create = Action(parse.json) { request =>

@@ -7,7 +7,6 @@ import org.specs2.mutable._
 import play.api.Logger
 import play.api.test._
 
-// TODO: use Guice to obtain the configured repository instead of a fixed one
 class AdvertsRepositorySpec extends Specification {
 
   private val repo: AdvertsRepository = new AdvertsJdbcRepository()

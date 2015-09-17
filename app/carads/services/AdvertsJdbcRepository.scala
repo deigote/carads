@@ -8,10 +8,6 @@ import carads.model._
 import play.api.Play.current
 import play.api.db._
 
-// TODO: move from raw JDBC to Slick, Anorm or any other Play abstraction. JDBC is so 20st century :)
-// TODO: move type constants to a better way - enum, case objs?
-// TODO: investigate a more functional way to define the exit condition in RS consumption
-// TODO: ensure translations between LocalDate and java.sql.Date are correct
 @Singleton
 class AdvertsJdbcRepository @Inject()() extends AdvertsRepository {
 

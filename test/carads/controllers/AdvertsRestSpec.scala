@@ -44,14 +44,6 @@ class AdvertsRestSpec extends Specification {
     ))
   )
 
-  // TODO: Investigate how the following can be used. Without it, interactions between controller and repo cannot be tested
-  /*
-  val application = new GuiceApplicationBuilder()
-    .overrides(bind[AdvertsRepository].to[AdvertsMockedRepository])
-    .build
-  */
-
-
   "Application" should {
 
     "send unsupported media type when creating an advert with no JSON content type" in new WithApplication() {
@@ -80,7 +72,6 @@ class AdvertsRestSpec extends Specification {
     }
 
     "send created along with the created advert when creating an advert with valid JSON body" in new WithApplication {
-      // TODO: test phase should automatically clear the database before starting
       repo.clear()
       validBodies.foreach { validBody =>
         val resp = route(
